@@ -4,13 +4,13 @@
       <div class="overlay">
         <div class="LeftDiv">
           <header>
-            <img src="../public/assets/logo.png" width="80px" alt="" />
+            <img src="../public/assets/logo.png" width="80px" />
           </header>
-          <div style="margin: 20px">
-            <h1>Luanda, AO</h1>
+          <div style="margin:20px" v-if="typeof weather.main!='undefined' ">
+            <h1>{{weather.name}}, {{weather.sys.country}}</h1>
             <p>Sunday 26 August 2020</p>
           </div>
-          <div class="centerContent">
+          <div class="centerContent" v-if="typeof weather.main!='undefined'">
             <h1 style="color: white; font-size: 4rem">16°C</h1>
           </div>
         </div>
@@ -41,19 +41,31 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "App",
   data() {
     return {
       api_key: "88bda33f4889ae5dab3a5116b34f856c",
-      url:'api.openweathermap.org/data/2.5',
+      url: "https://api.openweathermap.org/data/2.5/",
       year: new Date().getFullYear(),
-      searchtext:'',
-      weather:{}
+      searchtext: "",
+      weather: {},
     };
   },
   methods: {
-    
+    getweather(e) {
+      if (e.key == "Enter") {
+        axios(
+          `${this.url}weather?q=${this.searchtext}&units=metric&APPID=${this.api_key}`
+        ).then(res=>{
+          return res.json()
+        }).then(this.results);
+      }
+    },
+    results(results){
+      this.weather=results;
+    }
   },
 };
 </script>
