@@ -6,13 +6,21 @@
           <header>
             <img src="../public/assets/logo.png" width="80px" />
           </header>
-          <div style="margin:20px" v-if="typeof weather.main!='undefined' ">
-            <h1>{{weather.name}}, {{weather.sys.country}}</h1>
-            <p>Sunday 26 August 2020</p>
+          <div style="margin: 20px" v-if="typeof weather.main != 'undefined'">
+            <h1>{{ weather.name }}, {{ weather.sys.country }}</h1>
+            <p>{{ dateBuilder() }}</p>
           </div>
-          <div class="centerContent" v-if="typeof weather.main!='undefined'">
-            <h1 style="color: white; font-size: 4rem">16°C</h1>
+          <div class="centerContent" v-if="typeof weather.main != 'undefined'">
+            <h1 style="color: white; font-size: 4rem">
+              {{ Math.round(weather.main.temp) }}°C
+            </h1>
           </div>
+          <h1
+            style="margin-top: 10px"
+            v-if="typeof weather.main != 'undefined'"
+          >
+            {{ weather.weather[0].main }}
+          </h1>
         </div>
         <div class="RightDiv">
           <div class="searchbox">
@@ -24,12 +32,12 @@
               @keypress="getweather"
             />
           </div>
-          <div class="detailsbox">
+          <div class="detailsbox" v-if="typeof weather.main != 'undefined'">
             <p class="details-text">Detalhes do tempo</p>
             <hr class="line" />
-            <p class="details-text">Precipitação: 100%</p>
-            <p class="details-text">Humidade: 100%</p>
-            <p class="details-text">Vento: 100%</p>
+
+            <p class="details-text">Humidade: {{ weather.main.humidity }}%</p>
+            <p class="details-text">Vento: {{ weather.wind.speed }} km/h</p>
           </div>
           <footer>
             <p>© {{ year }} Aweather. All rights reserved.</p>
@@ -41,7 +49,6 @@
 </template>
 
 <script>
-import axios from "axios";
 export default {
   name: "App",
   data() {
@@ -50,22 +57,63 @@ export default {
       url: "https://api.openweathermap.org/data/2.5/",
       year: new Date().getFullYear(),
       searchtext: "",
+
       weather: {},
     };
   },
   methods: {
     getweather(e) {
       if (e.key == "Enter") {
-        axios(
-          `${this.url}weather?q=${this.searchtext}&units=metric&APPID=${this.api_key}`
-        ).then(res=>{
-          return res.json()
-        }).then(this.results);
+        fetch(
+          `${this.url}weather?q=${this.searchtext}&units=metric&lang=pt_br&APPID=${this.api_key}`
+        )
+          .then((res) => {
+            return res.json();
+          })
+          .then(this.results);
       }
     },
-    results(results){
-      this.weather=results;
-    }
+    results(results) {
+      if (results.cod == "404") {
+        this.searchtext = "";
+        alert("Cidade não encontrada");
+        this.weather = {};
+      } else {
+        this.searchtext = "";
+        this.weather = results;
+      }
+    },
+    dateBuilder() {
+      let date = new Date();
+      let meses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro",
+      ];
+      let dias = [
+        "Domingo",
+        "Segunda-feira",
+        "Terça-Feira",
+        "Quarta-feira",
+        "Quinta-feira",
+        "Sexta-feira",
+        "Sábado",
+      ];
+      let dia = dias[date.getDay()];
+      let data = date.getDate();
+      let mes = meses[date.getMonth()];
+      let ano = this.year;
+      return `${dia} ${data} de ${mes} de ${ano}`;
+    },
   },
 };
 </script>
@@ -124,6 +172,7 @@ export default {
   align-items: center;
   flex-direction: column;
   color: white;
+  transition: 0.3s;
 }
 .RightDiv {
   width: 40%;
@@ -147,7 +196,7 @@ export default {
 .searchinput {
   width: 100%;
   height: 36px;
-  padding: 10px;
+  padding: 22px;
   background: none;
   border: none;
   background-color: rgba(255, 255, 255, 0.856);
@@ -174,6 +223,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  transition: 0.3s;
 }
 .overlay {
   position: absolute;
@@ -183,5 +233,14 @@ export default {
   height: 100vh;
   display: flex;
   justify-content: space-between;
+}
+
+@media only screen and (max-width: 900px) {
+  .overlay {
+    flex-direction: column;
+  }
+  .RightDiv {
+    width: 80%;
+  }
 }
 </style>
