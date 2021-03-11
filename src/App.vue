@@ -6,16 +6,26 @@
           <header>
             <img src="../public/assets/logo.png" width="80px" />
           </header>
-          <div style="margin: 20px" v-if="typeof weather.main != 'undefined'">
-            <h1>{{ weather.name }}, {{ weather.sys.country }}</h1>
-            <p>{{ dateBuilder() }}</p>
+          <div class="searchboxmobile">
+            <input
+              type="text"
+              placeholder="Insira aqui o nome da sua cidade..."
+              class="searchinput"
+              v-model="searchtext"
+              @keypress="getweather"
+            />
           </div>
           <div class="centerContent" v-if="typeof weather.main != 'undefined'">
-            <h1 style="color: white; font-size: 4rem">
+            <h1 class="h1city">
+              {{ weather.name }}, {{ weather.sys.country }}
+            </h1>
+            <p>{{ dateBuilder() }}</p>
+            <h1 class="h1temp" style="color: white">
               {{ Math.round(weather.main.temp) }}°C
             </h1>
           </div>
           <h1
+            class="centerContent2"
             style="margin-top: 10px"
             v-if="typeof weather.main != 'undefined'"
           >
@@ -145,13 +155,12 @@ export default {
   height: 100%;
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   color: white;
+  align-items: center;
 }
 .LeftDiv header {
-  position: absolute;
+  position: relative;
   width: 100%;
   z-index: 2;
   top: 0;
@@ -162,7 +171,7 @@ export default {
   padding-top: 20px;
 }
 .centerContent {
-  width: 200px;
+  width: 300px;
   height: 200px;
   border: none;
   background-color: #3d56639f;
@@ -173,6 +182,12 @@ export default {
   flex-direction: column;
   color: white;
   transition: 0.3s;
+}
+.centerContent h1 {
+  margin: 10px;
+}
+.h1temp {
+  font-size: 4rem;
 }
 .RightDiv {
   width: 40%;
@@ -238,9 +253,44 @@ export default {
 @media only screen and (max-width: 900px) {
   .overlay {
     flex-direction: column;
+    align-items: center;
   }
   .RightDiv {
     width: 80%;
+    height: 300px;
+    border-radius: 15px;
   }
+  .centerContent {
+    margin-top: 40px;
+    width: 80%;
+    height: 150px;
+  }
+  .h1city {
+    font-size: 2rem;
+  }
+  .h1temp {
+    font-size: 2.5rem;
+  }
+  .searchbox {
+    display: none;
+  }
+  .LeftDiv header {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+  }
+  .searchboxmobile{
+    width: 80%;
+    margin-top: 40px;
+  }
+  .LeftDiv{
+    width: 100%;
+  }
+}
+@media only screen and (min-width: 901px) {
+ .searchboxmobile{
+   display: none;
+ }
 }
 </style>
