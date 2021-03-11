@@ -35,7 +35,7 @@
             </div>
             <div class="weathericon">
               <i class="fas fa-cloud"></i>
-              <span>Clouds</span>
+              <span>{{weather.weather[0].main}}</span>
             </div>
           </main>
         </section>
@@ -52,10 +52,12 @@
           <div class="detailsbox" v-if="typeof weather.main != 'undefined'">
             <span>Detalhes do tempo</span>
             <hr class="line" />
-            <span class="details">Humidade: {{ weather.main.humidity }}% </span>
-            <span class="details">Vento: {{ weather.wind.speed }} km/h</span>
+            <span class="details"><i class="fas fa-tint"></i> Humidade: {{ weather.main.humidity }}% </span>
+            <span class="details"><i class="fas fa-wind"></i> Vento: {{ weather.wind.speed }} km/h</span>
+            <span class="details"><img src="../public/assets/noun_sunrise_2178978.svg" width="20px" alt=""> Nascer do Sol: {{new Date( weather.sys.sunrise).toLocaleTimeString() }} </span>
+            <span class="details"><img src="../public/assets/noun_sun set_2178981.svg" width="20px" alt=""> Por do Sol: {{new Date( weather.sys.sunset).toLocaleTimeString() }} </span>
           </div>
-          <footer class="rightfooter">
+          <footer class="rightfooter" v-if="typeof weather.main != 'undefined'">
             <span>© {{ year }} Aweather. All rights reserved.</span>
           </footer>
         </section>
@@ -89,6 +91,7 @@ export default {
       }
     },
     results(results) {
+      console.log(results)
       if (results.cod == "404") {
         this.searchtext = "";
         alert("Cidade não encontrada");
@@ -314,6 +317,7 @@ export default {
   .left {
     width: 100%;
     position: relative;
+    height: auto;
     top: 0;
     left: 0;
     display: flex;
