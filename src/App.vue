@@ -2,57 +2,63 @@
   <div id="app">
     <div class="content">
       <div class="overlay">
-        <div class="LeftDiv">
+        <section class="left">
           <header>
-            <img src="../public/assets/logo.png" width="80px" />
+            <img src="../public/assets/logo.png" alt="Logo-Aweather" />
           </header>
-          <div class="searchboxmobile">
+          <div class="searchboxg mobile">
             <input
               type="text"
-              placeholder="Insira aqui o nome da sua cidade..."
-              class="searchinput"
+              class="searchtext"
               v-model="searchtext"
+              placeholder="Insira o nome da sua cidade aqui..."
               @keypress="getweather"
             />
           </div>
-          <div class="centerContent" v-if="typeof weather.main != 'undefined'">
-            <h1 class="h1city">
-              {{ weather.name }}, {{ weather.sys.country }}
-            </h1>
-            <p>{{ dateBuilder() }}</p>
-            <h1 class="h1temp" style="color: white">
-              {{ Math.round(weather.main.temp) }}°C
-            </h1>
-          </div>
-          <h1
-            class="centerContent2"
-            style="margin-top: 10px"
+          <main
+            class="cityTempHolder"
             v-if="typeof weather.main != 'undefined'"
           >
-            {{ weather.weather[0].main }}
-          </h1>
-        </div>
-        <div class="RightDiv">
-          <div class="searchbox">
+            <div class="cityTemp">
+              <div class="cityDate desk">
+                <h1>{{ weather.name }}, {{ weather.sys.country }}</h1>
+                <p>{{ dateBuilder() }}</p>
+              </div>
+              <div class="temp">
+                <h1 class="mobile">
+                  {{ Math.round(weather.main.temp) }}°C {{ weather.name }},
+                  {{ weather.sys.country }}
+                </h1>
+                <p class="mobile">{{ dateBuilder() }}</p>
+                <h1 class="desk">{{ Math.round(weather.main.temp) }}°C</h1>
+              </div>
+            </div>
+            <div class="weathericon">
+              <i class="fas fa-cloud"></i>
+              <span>Clouds</span>
+            </div>
+          </main>
+        </section>
+        <section class="right">
+          <div class="searchboxg desk">
             <input
               type="text"
-              placeholder="Insira aqui o nome da sua cidade..."
-              class="searchinput"
+              class="searchtext"
               v-model="searchtext"
+              placeholder="Insira o nome da sua cidade aqui..."
               @keypress="getweather"
             />
           </div>
           <div class="detailsbox" v-if="typeof weather.main != 'undefined'">
-            <p class="details-text">Detalhes do tempo</p>
+            <span>Detalhes do tempo</span>
             <hr class="line" />
-
-            <p class="details-text">Humidade: {{ weather.main.humidity }}%</p>
-            <p class="details-text">Vento: {{ weather.wind.speed }} km/h</p>
+            <span class="details">Humidade: {{ weather.main.humidity }}% </span>
+            <span class="details">Vento: {{ weather.wind.speed }} km/h</span>
           </div>
-          <footer>
-            <p>© {{ year }} Aweather. All rights reserved.</p>
+          <footer class="rightfooter">
+            <span>© {{ year }} Aweather. All rights reserved.</span>
           </footer>
-        </div>
+        </section>
       </div>
     </div>
   </div>
@@ -67,7 +73,6 @@ export default {
       url: "https://api.openweathermap.org/data/2.5/",
       year: new Date().getFullYear(),
       searchtext: "",
-
       weather: {},
     };
   },
@@ -75,7 +80,7 @@ export default {
     getweather(e) {
       if (e.key == "Enter") {
         fetch(
-          `${this.url}weather?q=${this.searchtext}&units=metric&lang=pt_br&APPID=${this.api_key}`
+          `${this.url}weather?q=${this.searchtext}&units=metric&lang=pt&APPID=${this.api_key}`
         )
           .then((res) => {
             return res.json();
@@ -122,175 +127,255 @@ export default {
       let data = date.getDate();
       let mes = meses[date.getMonth()];
       let ano = this.year;
-      return `${dia} ${data} de ${mes} de ${ano}`;
+      return `${dia}, ${data} de ${mes} de ${ano}`;
     },
   },
 };
 </script>
 
 <style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.mobile {
+  display: none;
+}
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
 .content {
+  width: 100vw;
+  height: 100vh;
   background-image: url("../public/assets/weather.jpg");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  width: 100vw;
-  height: 100vh;
-  position: relative;
 }
-.LeftDiv {
-  width: 60%;
+.overlay {
+  width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.493);
+  display: flex;
+}
+.left {
+  width: 60%;
   position: relative;
   display: flex;
-  flex-direction: column;
-  color: white;
+  justify-content: center;
   align-items: center;
 }
-.LeftDiv header {
-  position: relative;
-  width: 100%;
-  z-index: 2;
+
+.left header {
+  position: absolute;
+  z-index: 10;
   top: 0;
   left: 0;
-  display: flex;
-  align-items: flex-start;
-  padding-left: 20px;
-  padding-top: 20px;
+  width: 100%;
+  padding: 20px;
 }
-.centerContent {
-  width: 300px;
-  height: 200px;
-  border: none;
-  background-color: #3d56639f;
-  border-radius: 15px;
+.left header img {
+  width: 80px;
+}
+.cityTempHolder {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   color: white;
-  transition: 0.3s;
 }
-.centerContent h1 {
-  margin: 10px;
+.weathericon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.h1temp {
+.weathericon i {
+  font-size: 3rem;
+}
+.weathericon span {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.cityTemp {
+  width: 60%;
+ 
+  height: 150px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+}
+.cityDate {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cityDate h1 {
+  font-size: 2.2rem;
+}
+.cityDate p {
+  font-size: 0.9rem;
+}
+.temp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.temp h1 {
   font-size: 4rem;
 }
-.RightDiv {
-  width: 40%;
-  height: 100%;
-  background-color: #3d56639f;
-  color: white;
-  position: relative;
-}
-.RightDiv footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  color: rgba(209, 209, 209, 0.863);
-  padding: 10px;
-}
-.searchbox {
-  padding: 20px 50px 20px 50px;
-  border: none;
-}
-.searchinput {
-  width: 100%;
-  height: 36px;
-  padding: 22px;
-  background: none;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.856);
-  outline: none;
+
+.searchboxg {
+  width: 80%;
+  height: 50px;
+  background-color: none;
+  margin-top: 30px;
   transition: 0.3s;
-  border-radius: 0 15px 0 15px;
 }
-.searchinput:focus {
-  background-color: rgb(255, 255, 255);
-  border-radius: 15px 0 15px 0;
+.searchtext {
+  height: 100%;
+  width: 100%;
+  padding-left: 20px;
+  outline: none;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.616);
+  border-radius: 0px 15px 0px 15px;
+  transition: 0.3s;
+}
+.searchtext:focus {
+  border-radius: 15px 0px 15px 0px;
+  background-color: rgba(255, 255, 255, 0.849);
 }
 .line {
   width: 100%;
   border: none;
   height: 0.1px;
   background-color: rgba(250, 249, 249, 0.712);
-}
-.details-text {
-  margin: 10px 0 10px 0;
-  font-size: 1.2rem;
+  margin-top: 10px;
 }
 .detailsbox {
-  padding: 50px;
+  color: white;
+  width: 80%;
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   transition: 0.3s;
 }
-.overlay {
-  position: absolute;
-  z-index: 2;
-  background-color: rgba(0, 0, 0, 0.651);
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: space-between;
+.detailsbox :first-child {
+  font-size: 1.3rem;
 }
-
+.details {
+  margin-top: 13px;
+  font-size: 1.1rem;
+}
+.right {
+  width: 40%;
+  height: 100%;
+  background-color: #3d5663b2;
+  border-radius: 15px 0 0 15px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: baseline;
+  position: relative;
+}
+.rightfooter {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 20px;
+  width: 100%;
+}
 @media only screen and (max-width: 900px) {
-  .overlay {
-    flex-direction: column;
-    align-items: center;
-  }
-  .RightDiv {
-    width: 80%;
-    height: 300px;
-    border-radius: 15px;
-  }
-  .centerContent {
-    margin-top: 40px;
-    width: 80%;
-    height: 150px;
-  }
-  .h1city {
-    font-size: 2rem;
-  }
-  .h1temp {
-    font-size: 2.5rem;
-  }
-  .searchbox {
+  .desk {
     display: none;
   }
-  .LeftDiv header {
-    width: 100%;
+  .mobile {
+    display: block;
+  }
+  .content{
+    height: 100vh;
+  }
+  .overlay {
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    
+  }
+  .left {
+    width: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: flex;
     justify-content: center;
-    padding-top: 20px;
+    align-items: center;
+    flex-direction: column;
+    
   }
-  .searchboxmobile{
+  .left header {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    
+    padding: 10px;
+  }
+  .left header img {
+    width: 60px;
+  }
+  .cityTempHolder {
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+  .cityTemp {
     width: 80%;
-    margin-top: 40px;
+    padding: 10px;
+    height: auto;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    
   }
-  .LeftDiv{
+  
+  .cityDate h1 {
+    font-size: 1.5rem;
+  }
+  .temp {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     width: 100%;
   }
-}
-@media only screen and (min-width: 901px) {
- .searchboxmobile{
-   display: none;
- }
+  .temp h1 {
+    font-size: 2rem;
+  }
+  .right {
+    height: auto;
+    width: 80%;
+    border-radius: 15px;
+  }
+  .rightfooter {
+    position: relative;
+    
+  }
+  .rightfooter span {
+    font-size: 0.9rem;
+  }
 }
 </style>
